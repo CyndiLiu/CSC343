@@ -11,27 +11,69 @@ import java.util.List;
 //import java.util.HashSet;
 public class Assignment2 extends JDBCSubmission {
 
+    // Constructor
     public Assignment2() throws ClassNotFoundException {
 
         Class.forName("org.postgresql.Driver");
     }
 
-    @Override
+     /**
+     * Connects and sets the search path.
+     * 
+     * Return true if connecting is successful, false otherwise.
+     */
     public boolean connectDB(String url, String username, String password) {
-        // Implement this method!
-        return false;
+        try {
+			this.connection = DriverManager.getConnection(url, username, password); 
+		} catch (SQLException e) {
+			System.out.println("Failed to connect to database!");
+			return false;
+		}
+
+		if (this.connection == null) {
+			return false;
+		}
+
+		return true;
     }
 
-    @Override
+    /**
+     * Closes the database connection.
+     * 
+     * Return true if the closing was successful, false otherwise.
+     */
     public boolean disconnectDB() {
-        // Implement this method!
-        return false;
+        try {
+			this.connection.close();
+		} catch (SQLException e) {
+            System.out.println("Failed to disconnect database!");
+            return false;
+        }
+		return true;	   
     }
-
-    @Override
+    
+    /**
+     * Returns the list of elections over the years in descending order of years
+     * and the cabinets that have formed after each election.
+     */
     public ElectionCabinetResult electionSequence(String countryName) {
-        // Implement this method!
-        return null;
+        try {
+            sqlText = " SELECT count(*) AS rownum " +
+                      " FROM player " + 
+                      " WHERE countryName= ?" DESC;
+            ps = connection.prepareStatement(sqlText);
+            ps.setInt(1, countryName);
+            rs = ps.executeQuery();
+            // code for return the list
+
+            //Close the resultset
+            rs.close();
+            ps.close();
+		} catch (SQLException e) {
+            System.out.println("DisconnectDB failed!");
+            return false;
+        }
+		return true;
     }
 
     @Override
