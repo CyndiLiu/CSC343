@@ -1,6 +1,9 @@
 # CSC343
 database practise
 
+![alt text](https://raw.githubusercontent.com/CyndiLiu/CSC343/master/table_reference.png)
+
+
 ddl -> CREATE SCHEMA parlgov;
        SET SEARCH_PATH to parlgov;
 
