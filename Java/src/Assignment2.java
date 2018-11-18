@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 // If you are looking for Java data structures, these are highly useful.
@@ -40,20 +41,28 @@ public class Assignment2 extends JDBCSubmission {
 		return true;
     }
     
-    public void test() {
+    public void test(String countryName) {
+    	List<Integer> elections = new ArrayList<>();
+		List<Integer> cabinets = new ArrayList<>();
+		ElectionCabinetResult e_result;
     	try {
-    		String sql = " SELECT * FROM parlgov.country ";
+    		
+    		
+            String sql = "SELECT elec.id, cab.id" +
+            		" FROM parlgov.election AS elec, parlgov.country AS coun, parlgov.cabinet AS cab" +
+            		" WHERE cab.election_id = elec.id AND elec.country_id = coun.id AND coun.name = ?" +
+            		" ORDER BY elec.e_date";
+    		
         	PreparedStatement ps = this.connection.prepareStatement(sql); 
+        	ps.setString(1, countryName);
         	ResultSet rs = ps.executeQuery();
         	while(rs.next()){
-        		System.out.print(rs.getInt("id")+"        ");
-        		System.out.print(rs.getString("name")+"       ");
-        		System.out.print(rs.getString("abbreviation")+"     ");
-        		System.out.println(rs.getDate("oecd_accession_date"));
+        		int e_id = rs.getInt(1);
+        		int c_id = rs.getInt(2);
+        		elections.add(e_id);
+        		cabinets.add(c_id);
         	}
-            //Close the resultset
-        	rs.close();
-            ps.close();
+        	e_result = new ElectionCabinetResult(elections, cabinets);
 		} catch (SQLException e) {
             e.printStackTrace();          
         }
@@ -62,23 +71,31 @@ public class Assignment2 extends JDBCSubmission {
     @Override
     public ElectionCabinetResult electionSequence(String countryName) {
         // Implement this method!
+    	List<Integer> elections = new ArrayList<>();
+		List<Integer> cabinets = new ArrayList<>();
+		ElectionCabinetResult e_result;
     	try {
-            String sqlText = " SELECT * " +
-                      " FROM player " + 
-                      " WHERE countryName= ? DESC";
-            PreparedStatement ps = connection.prepareStatement(sqlText);
-            ps.setString(1, countryName);
-            ResultSet rs = ps.executeQuery();
-            // code for return the list
-
-            //Close the resultset
-            rs.close();
-            ps.close();
+    		
+    		
+            String sql = "SELECT elec.id, cab.id" +
+            		" FROM parlgov.election AS elec, parlgov.country AS coun, parlgov.cabinet AS cab" +
+            		" WHERE cab.election_id = elec.id AND elec.country_id = coun.id AND coun.name = ?" +
+            		" ORDER BY elec.e_date";
+    		
+        	PreparedStatement ps = this.connection.prepareStatement(sql); 
+        	ps.setString(1, countryName);
+        	ResultSet rs = ps.executeQuery();
+        	while(rs.next()){
+        		int e_id = rs.getInt(1);
+        		int c_id = rs.getInt(2);
+        		elections.add(e_id);
+        		cabinets.add(c_id);
+        	}
 		} catch (SQLException e) {
-            System.out.println("DisconnectDB failed!");
-            return false;
+            e.printStackTrace();          
         }
-		return true;
+    	e_result = new ElectionCabinetResult(elections, cabinets);
+		return e_result;
     }
 
      @Override
@@ -93,7 +110,8 @@ public class Assignment2 extends JDBCSubmission {
         try {
         	Assignment2 a2instance = new Assignment2();
         	a2instance.connectDB("jdbc:postgresql://localhost:5432/CSC343", "postgres", "****");
-        	a2instance.test();
+        	// a2instance.test("Japan");
+        	a2instance.electionSequence("Japan");
         	a2instance.disconnectDB();
         }
         catch(ClassNotFoundException e) {
