@@ -45,13 +45,10 @@ public class Assignment2 extends JDBCSubmission {
 		List<Integer> cabs = new ArrayList<>();
 		ElectionCabinetResult e_result;
     	try {
-    		
-    		
             String sql = "SELECT elec.id, cab.id" +
             		" FROM parlgov.election AS elec, parlgov.country AS coun, parlgov.cabinet AS cab" +
             		" WHERE cab.election_id = elec.id AND elec.country_id = coun.id AND coun.name = ?" +
-            		" ORDER BY elec.e_date";
-    		
+            		" ORDER BY elec.e_date DESC";
         	PreparedStatement ps = this.connection.prepareStatement(sql); 
         	ps.setString(1, countryName);
         	ResultSet rs = ps.executeQuery();
@@ -110,17 +107,17 @@ public class Assignment2 extends JDBCSubmission {
 
     public static void main(String[] args) {
         // You can put testing code in here. It will not affect our autotester.
-        System.out.println("Hello");
-        try {
-        	Assignment2 a2instance = new Assignment2();
-        	a2instance.connectDB("jdbc:postgresql://localhost:5432/CSC343", "postgres", "****");
-        	a2instance.electionSequence("Japan");
-        	a2instance.findSimilarPoliticians(9, (float) 1);
-        	a2instance.disconnectDB();
-        }
-        catch(ClassNotFoundException e) {
-        	e.printStackTrace();
-        }
+//        System.out.println("Hello");
+//        try {
+//        	Assignment2 a2instance = new Assignment2();
+//        	a2instance.connectDB("jdbc:postgresql://localhost:5432/CSC343", "postgres", "****");
+//        	a2instance.electionSequence("Japan");
+//        	a2instance.findSimilarPoliticians(9, (float) 1);
+//        	a2instance.disconnectDB();
+//        }
+//        catch(ClassNotFoundException e) {
+//        	e.printStackTrace();
+//        }
     }
 
 }
