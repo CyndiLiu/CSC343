@@ -23,7 +23,6 @@ public class Assignment2 extends JDBCSubmission {
         } catch(SQLException se) {
             return false;
         }
-        System.out.println("Connected to database");
         return true;
     }
 
@@ -36,42 +35,14 @@ public class Assignment2 extends JDBCSubmission {
             System.out.println("Failed to disconnect database!");
             return false;
         }
-    	System.out.println("Disconnected to database");
 		return true;
-    }
-    
-    public void test(String countryName) {
-    	List<Integer> elections = new ArrayList<>();
-		List<Integer> cabinets = new ArrayList<>();
-		ElectionCabinetResult e_result;
-    	try {
-    		
-    		
-            String sql = "SELECT elec.id, cab.id" +
-            		" FROM parlgov.election AS elec, parlgov.country AS coun, parlgov.cabinet AS cab" +
-            		" WHERE cab.election_id = elec.id AND elec.country_id = coun.id AND coun.name = ?" +
-            		" ORDER BY elec.e_date";
-    		
-        	PreparedStatement ps = this.connection.prepareStatement(sql); 
-        	ps.setString(1, countryName);
-        	ResultSet rs = ps.executeQuery();
-        	while(rs.next()){
-        		int e_id = rs.getInt(1);
-        		int c_id = rs.getInt(2);
-        		elections.add(e_id);
-        		cabinets.add(c_id);
-        	}
-        	e_result = new ElectionCabinetResult(elections, cabinets);
-		} catch (SQLException e) {
-            e.printStackTrace();          
-        }
     }
 
     @Override
     public ElectionCabinetResult electionSequence(String countryName) {
         // Implement this method!
-    	List<Integer> elections = new ArrayList<>();
-		List<Integer> cabinets = new ArrayList<>();
+    	List<Integer> elecs = new ArrayList<>();
+		List<Integer> cabs = new ArrayList<>();
 		ElectionCabinetResult e_result;
     	try {
     		
@@ -87,20 +58,54 @@ public class Assignment2 extends JDBCSubmission {
         	while(rs.next()){
         		int e_id = rs.getInt(1);
         		int c_id = rs.getInt(2);
-        		elections.add(e_id);
-        		cabinets.add(c_id);
+        		elecs.add(e_id);
+        		cabs.add(c_id);
         	}
 		} catch (SQLException e) {
             e.printStackTrace();          
         }
-    	e_result = new ElectionCabinetResult(elections, cabinets);
+    	e_result = new ElectionCabinetResult(elecs, cabs);
 		return e_result;
     }
 
      @Override
      public List<Integer> findSimilarPoliticians(Integer politicianName, Float threshold) {
          // Implement this method!
-         return null;
+    	 List<Integer> similar_p = new ArrayList<>();
+    	 String description_given = "";
+    	 String description_rest;
+    	 int id;
+    	 try {
+     		// Get the description of the given politician
+            String sql = "SELECT description" +
+             		" FROM parlgov.politician_president" +
+            		" WHERE id=?";
+     		
+         	PreparedStatement ps = this.connection.prepareStatement(sql); 
+         	ps.setInt(1, politicianName);
+         	ResultSet rs = ps.executeQuery();
+         	while(rs.next()){
+         		description_given = rs.getString(1);
+         	}
+         	// Get all the description except for the given politician
+         	String sql1 = "SELECT id, description" +
+             		" FROM parlgov.politician_president" +
+            		" WHERE id <> ?";
+         	ps = this.connection.prepareStatement(sql1); 
+         	ps.setInt(1, politicianName);
+         	rs = ps.executeQuery();
+         	// Compare the similarity with the threshold
+         	while(rs.next()){
+         		id = rs.getInt(1);
+         		description_rest = rs.getString(2);
+         		if ((float)similarity(description_given, description_rest) >= threshold) {
+         			similar_p.add(id);
+         		}
+         	}
+ 		} catch (SQLException e) {
+             e.printStackTrace();
+         }
+         return similar_p;
      }
 
     public static void main(String[] args) {
@@ -109,8 +114,8 @@ public class Assignment2 extends JDBCSubmission {
         try {
         	Assignment2 a2instance = new Assignment2();
         	a2instance.connectDB("jdbc:postgresql://localhost:5432/CSC343", "postgres", "****");
-        	// a2instance.test("Japan");
         	a2instance.electionSequence("Japan");
+        	a2instance.findSimilarPoliticians(9, (float) 1);
         	a2instance.disconnectDB();
         }
         catch(ClassNotFoundException e) {
