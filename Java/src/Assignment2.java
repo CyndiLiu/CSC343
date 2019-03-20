@@ -105,19 +105,43 @@ public class Assignment2 extends JDBCSubmission {
          return similar_p;
      }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         // You can put testing code in here. It will not affect our autotester.
-//        System.out.println("Hello");
-//        try {
+        System.out.println("Hello");
+        Connection conn;
+    	String url = "jdbc:postgresql://localhost:5432/?currentSchema=parlgov";
+        conn = DriverManager.getConnection(url, "postgres", "011211");
+        try {
 //        	Assignment2 a2instance = new Assignment2();
 //        	a2instance.connectDB("jdbc:postgresql://localhost:5432/CSC343", "postgres", "****");
 //        	a2instance.electionSequence("Japan");
 //        	a2instance.findSimilarPoliticians(9, (float) 1);
 //        	a2instance.disconnectDB();
-//        }
-//        catch(ClassNotFoundException e) {
-//        	e.printStackTrace();
-//        }
+        	PreparedStatement ps;
+//            PreparedStatement ps = conn.prepareStatement("CREATE TABLE IF NOT EXISTS Owner(oid INT,fname varchar(225),Iname varchar(225))");
+//            ps.executeUpdate();
+        	
+//            conn.setAutoCommit(false);
+//            Statement stmt = conn.createStatement();
+//            String queryString = "INSERT INTO Owner VALUES (2, 'Tony', 'Montana')";
+//            stmt.executeUpdate(queryString);
+//            queryString = "INSERTED VALUES (3, 'Michael', Montana')";
+//            stmt.executeUpdate(queryString);
+//            conn.commit();
+            
+            String queryString = "SELECT count(*) FROM Owner";
+            ps = conn.prepareStatement(queryString);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                System.out.println(rs.getInt(1));
+            }
+            
+            conn.close();
+        }
+        catch (SQLException se)
+        {
+            conn.rollback();;
+        }
     }
 
 }

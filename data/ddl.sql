@@ -188,15 +188,15 @@ CREATE TABLE politician_president(
   -- There can be gaps.
 );
 
-\COPY country FROM 'country.csv' DELIMITER ',' CSV header;
-\COPY party FROM 'party.csv' DELIMITER ',' CSV header;
-\COPY cabinet FROM 'cabinet.csv' DELIMITER ',' CSV header;
-\COPY election FROM 'election.csv' DELIMITER ',' CSV header;
-\COPY cabinet_party FROM 'cabinet_party.csv' DELIMITER ',' CSV header;
-\COPY election_result FROM 'election_result.csv' DELIMITER ',' CSV header;
-\COPY party_position FROM 'party_position.csv' DELIMITER ',' CSV header;
-\COPY party_family FROM 'party_family.csv' DELIMITER ',' CSV header;
-\COPY politician_president FROM 'politician_president.csv' DELIMITER ',' CSV header;
+\COPY country FROM 'data/country.csv' DELIMITER ',' CSV header;
+\COPY party FROM 'data/party.csv' DELIMITER ',' CSV header;
+\COPY cabinet FROM 'data/cabinet.csv' DELIMITER ',' CSV header;
+\COPY election FROM 'data/election.csv' DELIMITER ',' CSV header;
+\COPY cabinet_party FROM 'data/cabinet_party.csv' DELIMITER ',' CSV header;
+\COPY election_result FROM 'data/election_result.csv' DELIMITER ',' CSV header;
+\COPY party_position FROM 'data/party_position.csv' DELIMITER ',' CSV header;
+\COPY party_family FROM 'data/party_family.csv' DELIMITER ',' CSV header;
+\COPY politician_president FROM 'data/politician_president.csv' DELIMITER ',' CSV header;
 
 ALTER TABLE cabinet ADD CONSTRAINT 
   fk_election_id 
